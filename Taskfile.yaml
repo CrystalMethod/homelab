@@ -1,0 +1,28 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  PYTHON_BIN: python3
+  KUBERNETES_DIR: "{{.ROOT_DIR}}/kubernetes"
+
+env:
+  KUBECONFIG: "{{.ROOT_DIR}}/kubeconfig"
+  SOPS_AGE_KEY_FILE: "{{.ROOT_DIR}}/age.key"
+
+includes:
+  cluster: .taskfiles/ClusterTasks.yaml
+
+tasks:
+
+  default:
+    cmd: task -l
+
+  deps:
+    desc: Create a Python virtual environment and install required packages
+    cmds:
+      - "{{.PYTHON_BIN}} -m venv {{.ROOT_DIR}}/.venv"
+      - .venv/bin/python3 -m pip install --upgrade pip setuptools wheel
+      - .venv/bin/python3 -m pip install --upgrade --requirement "{{.ROOT_DIR}}/requirements.txt"
+      - .venv/bin/ansible-galaxy install --role-file "{{.ROOT_DIR}}/requirements.yaml" --force

@@ -1,0 +1,8 @@
+# Thrash
+.DS_Store
+Thumb.db
+# k8s
+*.key
+# Ansible
+.venv*
+
